@@ -37,15 +37,25 @@ function onImgClick(evt) {
   if (!isGalarryItemEl) {
     return;
   }
-  // викликаємо бібліотеку  basicLightbox, відкриття модального вікна
+  // викликаємо бібліотеку  basicLightbox
   const instance = basicLightbox.create(
-    `<img src="${evt.target.dataset.source}" width="800" height="600">`
-  );
-  instance.show();
-  // закриття модального вікна
-  galleryContainerRef.addEventListener("keydown", (evt) => {
-    if (evt.code === "Escape") {
-      instance.close();
+    `<img src="${evt.target.dataset.source}" width="800" height="600">`,
+    {
+      onShow: (instance) => {
+        document.addEventListener("keydown", onEscapeClose);
+      },
+      onClose: (instance) => {
+        document.removeEventListener("keydown", onEscapeClose);
+      },
     }
-  });
+  );
+
+  function onEscapeClose() {
+    galleryContainerRef.addEventListener("keydown", (evt) => {
+      if (evt.code === "Escape") {
+        instance.close();
+      }
+    });
+  }
+  instance.show();
 }
